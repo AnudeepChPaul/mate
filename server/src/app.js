@@ -8,16 +8,16 @@ const morgan = require('morgan')
 const app = express()
 
 app.use(morgan('combined'))
+app.use(bodyParser.urlencoded({
+  extended: true
+}))
 app.use(bodyParser.json())
 app.use(cors())
 
-app.get('/', (req, res) => {
-  res.send('hello world')
-})
-
-app.get('/status', (req, res) => {
+app.post('/register', (req, res) => {
+  console.log(req)
   res.send({
-    msg: `server's up and running`
+    msg: `Hello ${req.body.email}, you are registered.`
   })
 })
 
