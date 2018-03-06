@@ -1,14 +1,24 @@
 <template>
-  <div>
-      <h1>
-        Register
-      </h1>
-      <input type="email" name="email" placeholder="email" v-model="email">
-      <br>
-      <input type="password" name="password" placeholder="password" v-model="password">
-      <br>
-      <button @click="register">Register</button>
-  </div>
+  <v-layout align-center justify-center>
+      <v-flex xs12 sm8 md4>
+        <v-card class="elevation-2">
+          <v-toolbar dark color="primary">
+            <v-toolbar-title>Register</v-toolbar-title>
+            <v-spacer></v-spacer>
+          </v-toolbar>
+          <v-card-text>
+            <v-form>
+              <v-text-field name="login" label="email" v-model="email" type="text"></v-text-field>
+              <v-text-field name="password" label="Password" v-model="password" id="password" type="password"></v-text-field>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="register" v-bind:disabled = "this.register_disabled">Login</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -19,21 +29,55 @@ export default {
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      email_error: false,
+      password_error: false,
+      register_disabled: true
     }
   },
   watch: {
-    email (value) {
-      console.log('email has changed value: ', value)
+    email (email) {
+      this.email_error = !this.validateEmail(email)
+      this.enableButton()
+    },
+
+    password (password) {
+      this.password_error = !this.validatePassword(password)
+      this.enableButton()
     }
   },
   methods: {
     async register () {
-      const response = await AuthenticationSerive.register({
-        email: this.email,
-        password: this.password
-      })
-      console.log(response)
+      try {
+        const authReply = await AuthenticationSerive.register({
+          email: this.email,
+          password: this.password
+        })
+        if(authReply.data.success) {
+          this.$store.dispatch('AuthenticationStore/SET_AUTHENTICATION', {
+            isAuthenticated: true
+          })
+        }
+      } catch (err) {
+        this.$store.dispatch('AuthenticationStore/SET_AUTHENTICATION', {
+          isAuthenticated: false
+        })
+      }
+    },
+
+    validateEmail (email) {
+      return new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:" +
+        "\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+" +
+        ')*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])' +
+        '?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?').test(email)
+    },
+
+    validatePassword (password) {
+      return new RegExp('^[a-zA-z0-9]{8,32}$').test(password)
+    },
+
+    enableButton () {
+      this.register_disabled = (this.email && this.password) &&!(!this.email_error && !this.password_error)
     }
   }
 }
@@ -54,5 +98,11 @@ li {
 }
 a {
   color: #42b983;
+}
+.error {
+  color: red;
+}
+.field_wrapper {
+  display: inline-grid;
 }
 </style>

@@ -3,7 +3,11 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const config = require('./config/config')
-const mongo = require('./models/index')
+
+// mongodb version
+// const mongo = require('./models/index')
+
+const { sequelize } = require('./models')
 
 const app = express()
 
@@ -16,12 +20,17 @@ app.use(cors())
 
 require('./routes')(app)
 
-mongo.mongoClient.connect((err, client) => {
-  if (err) throw err
+// mongo.mongoClient.connect((err, client) => {
+//   if (err) throw err
 
-  const db = client.db(config.db.name)
-  mongo.workerDb = db
+//   const db = client.db(config.db.name)
+//   mongo.workerDb = db
 
+//   app.listen(config.port)
+//   console.log(`Server started at ${config.port}.`)
+// })
+
+sequelize.sync({ force: false }).then(() => {
   app.listen(config.port)
   console.log(`Server started at ${config.port}.`)
 })

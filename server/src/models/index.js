@@ -1,13 +1,38 @@
+// const config = require('./../config/config')
 
-const config = require('./../config/config')
+// const mongodb = require('mongodb')
+// const MongoClient = mongodb.MongoClient
+// const db = {}
 
-const mongodb = require('mongodb')
-const MongoClient = mongodb.MongoClient
+// const mongoClient = new MongoClient(config.db.url)
+
+// db.mongoClient = mongoClient
+// db.MongoClient = MongoClient
+
+// module.exports = db
+
+const fs = require('fs')
+const path = require('path')
+const Sequelize = require('sequelize')
+const config = require('../config/config')
 const db = {}
 
-const mongoClient = new MongoClient(config.db.url)
+const sequelize = new Sequelize(
+  config.db.database,
+  config.db.user,
+  config.db.password,
+  config.db.options
+)
 
-db.mongoClient = mongoClient
-db.MongoClient = MongoClient
+fs
+  .readdirSync(__dirname)
+  .filter((file) => file !== 'index.js')
+  .forEach((file) => {
+    const model = sequelize.import(path.join(__dirname, file))
+    db[model.name] = model
+  })
+
+db.Sequelize = Sequelize
+db.sequelize = sequelize
 
 module.exports = db
