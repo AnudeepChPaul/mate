@@ -1,9 +1,9 @@
-console.log('hey!')
-
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
+const config = require('./config/config')
+const mongo = require('./models/index')
 
 const app = express()
 
@@ -14,11 +14,14 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 app.use(cors())
 
-app.post('/register', (req, res) => {
-  console.log(req)
-  res.send({
-    msg: `Hello ${req.body.email}, you are registered.`
-  })
-})
+require('./routes')(app)
 
-app.listen(process.env.PORT || 9000)
+mongo.mongoClient.connect((err, client) => {
+  if (err) throw err
+
+  const db = client.db(config.db.name)
+  mongo.workerDb = db
+
+  app.listen(config.port)
+  console.log(`Server started at ${config.port}.`)
+})
