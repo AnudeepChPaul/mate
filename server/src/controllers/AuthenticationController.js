@@ -25,6 +25,17 @@
 //   }
 // }
 const { User } = require('../models')
+const jwt = require('jsonwebtoken')
+const config = require('../config/config')
+
+// const isPasswordValid = (password, user) => (password === user.password)
+
+const jwtSignUser = (user) => {
+  const TWO_HOURS = 60 * 60 * 2
+  return jwt.sign(user, config.authentication.jwtSecret, {
+    expiresIn: TWO_HOURS
+  })
+}
 
 module.exports = {
   async register (req, res) {
@@ -41,6 +52,52 @@ module.exports = {
         error: true,
         data: {
           error: err || 'duplicate_key_error'
+        }
+      })
+    }
+  },
+
+  async login (req, res) {
+    try {
+      const { email, password } = req.body
+      const user = await User.findOne({
+        where: {
+          email: email
+        }
+      })
+      if (!user) {
+        res.status(403).send({
+          error: true,
+          data: {
+            error: 'Login information was incorrect'
+          }
+        })
+      } else {
+        const isPasswordValid = user.validatePassword(password)
+        if (isPasswordValid) {
+          const userJson = user.toJSON()
+
+          res.send({
+            success: true,
+            data: {
+              authStatus: true,
+              token: jwtSignUser(userJson)
+            }
+          })
+        } else {
+          res.status(403).send({
+            error: true,
+            data: {
+              error: 'Login information was incorrect'
+            }
+          })
+        }
+      }
+    } catch (err) {
+      res.status(500).send({
+        error: true,
+        data: {
+          error: `An error has occured while trying to login`
         }
       })
     }

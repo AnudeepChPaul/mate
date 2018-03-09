@@ -1,13 +1,28 @@
 <template>
   <v-app id="app">
     <!-- <img src="./assets/logo.png"> -->
-    <router-view/>
+    <v-content>
+      <page-header/>
+        <div
+          class="scroll-y"
+          id="scrolling-techniques"
+        >
+          <v-container fluid dark>
+            <router-view/>
+          </v-container>
+        </div>
+    </v-content>
   </v-app>
 </template>
 
 <script>
+import PageHeader from '@/components/PageHeader'
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    PageHeader
+  }
 }
 </script>
 
@@ -19,5 +34,8 @@ export default {
   text-align: center;
   color: #2c3e50;
   /* margin-top: 60px; */
+}
+html {
+  overflow-y: auto;
 }
 </style>

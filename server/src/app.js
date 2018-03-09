@@ -1,15 +1,13 @@
-const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const config = require('./config/config')
 
-// mongodb version
-// const mongo = require('./models/index')
-
 const { sequelize } = require('./models')
 
-const app = express()
+const app = require('express')()
+const server = require('http').Server(app)
+const io = require('socket.io')(server)
 
 app.use(morgan('combined'))
 app.use(bodyParser.urlencoded({
@@ -19,7 +17,10 @@ app.use(bodyParser.json())
 app.use(cors())
 
 require('./routes')(app)
+require('./ioevents')(io)
 
+// mongodb version
+// const mongo = require('./models/index')
 // mongo.mongoClient.connect((err, client) => {
 //   if (err) throw err
 
@@ -31,6 +32,6 @@ require('./routes')(app)
 // })
 
 sequelize.sync({ force: false }).then(() => {
-  app.listen(config.port)
+  server.listen(config.port)
   console.log(`Server started at ${config.port}.`)
 })

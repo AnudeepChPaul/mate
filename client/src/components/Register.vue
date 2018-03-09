@@ -1,7 +1,7 @@
 <template>
   <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4>
-        <v-card class="elevation-2">
+        <v-card class="elevation-1">
           <v-toolbar dark color="primary">
             <v-toolbar-title>Register</v-toolbar-title>
             <v-spacer></v-spacer>
@@ -22,6 +22,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import AuthenticationSerive from '@/services/AuthenticationService'
 
 export default {
@@ -53,7 +54,7 @@ export default {
           email: this.email,
           password: this.password
         })
-        if(authReply.data.success) {
+        if (authReply.data.success) {
           this.$store.dispatch('AuthenticationStore/SET_AUTHENTICATION', {
             isAuthenticated: true
           })
@@ -77,7 +78,7 @@ export default {
     },
 
     enableButton () {
-      this.register_disabled = (this.email && this.password) &&!(!this.email_error && !this.password_error)
+      this.register_disabled = (this.email && this.password) && !(!this.email_error && !this.password_error)
     }
   }
 }
