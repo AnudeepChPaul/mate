@@ -5,7 +5,7 @@ const state = {
 }
 
 const getters = {
-  'GET_AUTHENTICATION_STATUS': (state) => (state.isAuthenticated),
+  'GET_AUTHENTICATION_STATUS': (state) => () => (state.isAuthenticated),
   'GET_AUTHENTICATION_TOKEN': (state) => (state.token)
 }
 

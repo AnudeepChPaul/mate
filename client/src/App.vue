@@ -17,11 +17,22 @@
 
 <script>
 import PageHeader from '@/components/PageHeader'
+import {mapGetters} from 'vuex'
 
 export default {
   name: 'App',
   components: {
     PageHeader
+  },
+  computed: {
+    ...mapGetters({
+      loggedInChange: 'AuthenticationStore/GET_AUTHENTICATION_STATUS'
+    })
+  },
+  watch: {
+    loggedInChange: function (value) {
+      console.log(value)
+    }
   }
 }
 </script>
