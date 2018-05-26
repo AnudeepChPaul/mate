@@ -60,8 +60,9 @@ class Store {
   }
 }
 
-var storage = new Store();
-
+const storage = new Store();
+// get: localhost:9000/data/
+// get: localhost:9000/data/id
 app.get('/data', function(req, res) {
   try {
       res.send({
