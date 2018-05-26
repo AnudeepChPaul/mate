@@ -30,7 +30,14 @@ require('./routes')(app)
 //   const db = client.db(config.db.name)
 //   mongo.workerDb = db
 
-  app.listen(config.port)
+app.get('/data', function(req, res) {
+  
+});
+app.post('/data', function(req, res) {
+    
+});
+
+app.listen(config.port,
   console.log(`Server started at ${config.port}.`)
 })
 
